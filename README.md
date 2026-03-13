@@ -21,8 +21,9 @@ locally.
 
 ### Source fonts
 
-Download Matthew Skala's OCR-A and OCR-B from the
-[Tsukurimashou project](https://tsukurimashou.org/index.php.en)
+Download Matthew Skala's
+[OCR-A and OCR-B](https://tsukurimashou.org/files/ocr-0.3.1.zip)
+from the [Tsukurimashou project](https://tsukurimashou.org/ocr.php.en)
 and install them to `~/.local/share/fonts/`:
 
 - `OCRA.otf`
@@ -57,7 +58,7 @@ ocrab is a derivative work based on:
   original Metafont source is unrestricted.
 
 Both source fonts are from the
-[Tsukurimashou project](https://tsukurimashou.org/index.php.en).
+[Tsukurimashou project](https://tsukurimashou.org/ocr.php.en).
 
 ## License
 
