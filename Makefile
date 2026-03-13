@@ -7,17 +7,21 @@ else
     FONT_DIR := ~/.local/share/fonts
 endif
 
-FONTFORGE := fontforge
-FONTIMAGE := fontimage
-SILICON   := silicon
-OUTPUT    := fonts/ocrab.ttf
+FONTFORGE  := fontforge
+FONTIMAGE  := fontimage
+SILICON    := silicon
+OUTPUT     := fonts/ocrab.ttf
+NERD_FONT  := fonts/ocrab-nerd-font.ttf
 
-.PHONY: install build images clean
+.PHONY: install build patch images clean
 .PHONY: images/chars.png images/code.png $(OUTPUT)
 
 install:
 	mkdir -p $(FONT_DIR)
 	cp fonts/ocrab.ttf $(FONT_DIR)/ocrab.ttf
+	@if [ -f $(NERD_FONT) ]; then \
+		cp $(NERD_FONT) $(FONT_DIR)/ocrab-nerd-font.ttf; \
+	fi
 ifeq ($(UNAME),Darwin)
 else ifneq ($(OS),Windows_NT)
 	fc-cache -f
@@ -27,6 +31,16 @@ build: $(OUTPUT)
 
 $(OUTPUT): build.py sources/OCRA.otf sources/OCRB.ttf
 	$(FONTFORGE) -lang=py -script build.py
+
+patch: $(NERD_FONT)
+
+$(NERD_FONT): $(OUTPUT)
+	docker run --rm --user $(shell id -u):$(shell id -g) \
+		-v $(CURDIR)/$(OUTPUT):/in/ocrab.ttf:ro \
+		-v $(CURDIR)/fonts:/out \
+		nerdfonts/patcher \
+		--mono --complete --careful --no-progressbars
+	mv fonts/OcrabNerdFontMono-Regular.ttf $@
 
 images: images/chars.png images/code.png
 
@@ -59,4 +73,4 @@ images/code.png: $(OUTPUT)
 		--background "#111111"
 
 clean:
-	rm -f $(OUTPUT)
+	rm -f $(OUTPUT) $(NERD_FONT)

@@ -23,6 +23,19 @@ to the system font directory:
 make
 ```
 
+## Nerd Font
+
+A patched variant with
+[Nerd Font](https://www.nerdfonts.com/) icons is available
+at `fonts/ocrab-nerd-font.ttf`. It is installed alongside
+the base font when running `make`.
+
+To rebuild the patched font from source (requires Docker):
+
+```sh
+make patch
+```
+
 ## Credits
 
 ocrab is a derivative work based on:
