@@ -13,26 +13,13 @@ character of OCR-A with the more legible symbols of OCR-B.
 
 ![Code sample](images/code.png)
 
-## Building
+## Install
 
-The build script requires [FontForge](https://fontforge.org)
-with Python scripting support. The source fonts (OCR-A and
-OCR-B from the
-[Tsukurimashou project](https://tsukurimashou.org/ocr.php.en))
-are included in the `sources/` directory.
-
-### Generate the font
+The font is available at `fonts/ocrab.ttf`. To install it
+to the system font directory:
 
 ```sh
 make
-```
-
-The generated font is output to `fonts/ocrab.ttf`.
-
-To build and install to `~/.local/share/fonts/`:
-
-```sh
-make install
 ```
 
 ## Credits
