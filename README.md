@@ -27,6 +27,8 @@ are included in the `sources/` directory.
 make
 ```
 
+The generated font is output to `fonts/ocrab.ttf`.
+
 To build and install to `~/.local/share/fonts/`:
 
 ```sh
