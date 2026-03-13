@@ -27,9 +27,7 @@ def is_letter_or_digit(cp):
 
 def build_ocrb_codepoints(ocrb):
     """Return the set of codepoints present in OCR-B."""
-    return {
-        g.unicode for g in ocrb.glyphs() if g.unicode >= 0
-    }
+    return {g.unicode for g in ocrb.glyphs() if g.unicode >= 0}
 
 
 def replace_symbols(ocra, ocrb, ocrb_codepoints):
@@ -78,9 +76,7 @@ def set_metadata(font):
     # Clear inherited name table entries from the
     # source font so only our names remain.
     for record in list(font.sfnt_names):
-        font.appendSFNTName(
-            str(record[0]), str(record[1]), ""
-        )
+        font.appendSFNTName(str(record[0]), str(record[1]), "")
 
     names = {
         "Family": "ocrab",
