@@ -13,7 +13,7 @@ SILICON   := silicon
 OUTPUT    := fonts/ocrab.ttf
 
 .PHONY: install build images clean
-.PHONY: images/chars.png images/code.png
+.PHONY: images/chars.png images/code.png $(OUTPUT)
 
 install:
 	mkdir -p $(FONT_DIR)

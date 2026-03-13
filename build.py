@@ -67,6 +67,37 @@ def replace_symbols(ocra, ocrb, ocrb_codepoints):
     print(f"Replaced {replaced} glyphs with OCR-B")
 
 
+def add_dot_to_zero(font):
+    """Add a centered dot inside the zero glyph."""
+    glyph = font[0x30]
+    bb = glyph.boundingBox()
+    cx = (bb[0] + bb[2]) / 2
+    cy = (bb[1] + bb[3]) / 2
+    r = (bb[3] - bb[1]) * 0.08
+
+    k = 0.5522847498 * r
+    c = fontforge.contour()
+    c += fontforge.point(cx, cy + r, True)
+    c += fontforge.point(cx + k, cy + r, False)
+    c += fontforge.point(cx + r, cy + k, False)
+    c += fontforge.point(cx + r, cy, True)
+    c += fontforge.point(cx + r, cy - k, False)
+    c += fontforge.point(cx + k, cy - r, False)
+    c += fontforge.point(cx, cy - r, True)
+    c += fontforge.point(cx - k, cy - r, False)
+    c += fontforge.point(cx - r, cy - k, False)
+    c += fontforge.point(cx - r, cy, True)
+    c += fontforge.point(cx - r, cy + k, False)
+    c += fontforge.point(cx - k, cy + r, False)
+    c.closed = True
+    c.is_quadratic = False
+
+    layer = glyph.foreground
+    layer += c
+    glyph.foreground = layer
+    glyph.correctDirection()
+
+
 def set_metadata(font):
     """Set font family and naming metadata."""
     font.fontname = "ocrab"
@@ -100,6 +131,7 @@ def main():
 
     ocrb_codepoints = build_ocrb_codepoints(ocrb)
     replace_symbols(ocra, ocrb, ocrb_codepoints)
+    add_dot_to_zero(ocra)
     set_metadata(ocra)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

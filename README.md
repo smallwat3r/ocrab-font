@@ -6,6 +6,7 @@ operators, brackets, and other non-alphanumeric glyphs).
 
 The result is a hybrid that pairs the distinctive, geometric
 character of OCR-A with the more legible symbols of OCR-B.
+The zero glyph has a centered dot to distinguish it from O.
 
 ## Preview
 
