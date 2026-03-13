@@ -16,22 +16,10 @@ character of OCR-A with the more legible symbols of OCR-B.
 ## Building
 
 The build script requires [FontForge](https://fontforge.org)
-with Python scripting support, and the source fonts installed
-locally.
-
-### Source fonts
-
-Download Matthew Skala's
-[OCR-A and OCR-B](https://tsukurimashou.org/files/ocr-0.3.1.zip)
-from the [Tsukurimashou project](https://tsukurimashou.org/ocr.php.en)
-and install them to `~/.local/share/fonts/`:
-
-- `OCRA.otf`
-- `OCRB.ttf`
-
-The source fonts use different formats (OTF and TTF), but
-FontForge handles the conversion transparently during the
-build.
+with Python scripting support. The source fonts (OCR-A and
+OCR-B from the
+[Tsukurimashou project](https://tsukurimashou.org/ocr.php.en))
+are included in the `sources/` directory.
 
 ### Generate the font
 

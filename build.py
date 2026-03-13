@@ -10,9 +10,9 @@ import fontforge
 import unicodedata
 from pathlib import Path
 
-FONTS_DIR = Path.home() / ".local/share/fonts"
-OCRA_PATH = FONTS_DIR / "OCRA.otf"
-OCRB_PATH = FONTS_DIR / "OCRB.ttf"
+SOURCES_DIR = Path(__file__).resolve().parent / "sources"
+OCRA_PATH = SOURCES_DIR / "OCRA.otf"
+OCRB_PATH = SOURCES_DIR / "OCRB.ttf"
 OUTPUT_DIR = Path(__file__).resolve().parent / "fonts"
 OUTPUT = OUTPUT_DIR / "ocrab.ttf"
 
