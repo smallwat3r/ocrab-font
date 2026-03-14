@@ -8,6 +8,12 @@ The result is a hybrid that pairs the distinctive, geometric
 character of OCR-A with the more legible symbols of OCR-B.
 The zero glyph has a centered dot to distinguish it from O.
 
+Accented characters missing from OCR-A are either taken
+directly from OCR-B (ä, ö, ü, ß, æ, ø, Œ, œ, etc.) or
+composed by combining OCR-A base letters with OCR-B accent
+marks (é, è, ê, ë, à, á, â, ã, ç, ñ, ì, í, î, ï, ò, ó,
+ô, õ, ù, ú, û, ý, ÿ, and their uppercase equivalents).
+
 ## Preview
 
 ![Character set](images/chars.png)
