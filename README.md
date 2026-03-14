@@ -2,17 +2,24 @@
 
 A monospaced font that combines **OCR-A** letterforms
 (letters and digits) with **OCR-B** symbols (punctuation,
-operators, brackets, and other non-alphanumeric glyphs).
+operators, brackets, and other non-alphanumeric glyphs),
+pairing the distinctive, geometric character of OCR-A with
+the more legible symbols of OCR-B.
 
-The result is a hybrid that pairs the distinctive, geometric
-character of OCR-A with the more legible symbols of OCR-B.
-The zero glyph has a centered dot to distinguish it from O.
+## Modifications
 
-Accented characters missing from OCR-A are either taken
-directly from OCR-B (ä, ö, ü, ß, æ, ø, Œ, œ, etc.) or
-composed by combining OCR-A base letters with OCR-B accent
-marks (é, è, ê, ë, à, á, â, ã, ç, ñ, ì, í, î, ï, ò, ó,
-ô, õ, ù, ú, û, ý, ÿ, and their uppercase equivalents).
+- All non-alphanumeric glyphs (punctuation, operators,
+  brackets, etc.) are replaced with their OCR-B equivalents
+- The zero glyph has a centered dot to distinguish it
+  from O
+- Accented characters missing from OCR-A are either taken
+  directly from OCR-B (ä, ö, ü, ß, æ, ø, Œ, œ, etc.) or
+  composed by combining OCR-A base letters with OCR-B
+  accent marks (é, è, ê, ë, à, á, â, ã, ç, ñ, ì, í, î,
+  ï, ò, ó, ô, õ, ù, ú, û, ý, ÿ, and their uppercase
+  equivalents)
+- Guillemets (« ») are composed from scaled pairs of
+  < and >
 
 ## Preview
 
@@ -26,7 +33,16 @@ The font is available at `fonts/ocrab.ttf`. To install it
 to the system font directory:
 
 ```sh
-make
+make install
+```
+
+## Build
+
+To rebuild the font from source
+(requires [FontForge](https://fontforge.org/)):
+
+```sh
+make build
 ```
 
 ## Nerd Font
@@ -34,7 +50,11 @@ make
 A patched variant with
 [Nerd Font](https://www.nerdfonts.com/) icons is available
 at `fonts/ocrab-nerd-font.ttf`. It is installed alongside
-the base font when running `make`.
+the base font when running `make install`.
+
+The Nerd Font version is recommended, as it includes
+additional patched glyphs such as box-drawing characters,
+arrows, powerline symbols, and file/folder icons.
 
 To rebuild the patched font from source (requires Docker):
 
