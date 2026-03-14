@@ -298,6 +298,56 @@ def compose_accented_glyphs(font: Font, ocrb: Font) -> None:
     print(f"Composed {composed} accented glyphs")
 
 
+def compose_guillemets(font: Font) -> None:
+    """Compose « and » from doubled < and > glyphs."""
+    pairs = [
+        (0xAB, ord("<")),  # «
+        (0xBB, ord(">")),  # »
+    ]
+    scale = 0.55
+    gap = 20
+
+    for target_cp, base_cp in pairs:
+        if _glyph_exists(font, target_cp):
+            continue
+
+        base = font[base_cp]
+        bb = base.boundingBox()
+        base_w = bb[2] - bb[0]
+        base_h = bb[3] - bb[1]
+        base_cy = (bb[1] + bb[3]) / 2
+
+        scaled_w = base_w * scale
+        total_w = scaled_w * 2 + gap
+        cell_cx = TARGET_WIDTH / 2
+        left_x = cell_cx - total_w / 2
+
+        font.createChar(target_cp)
+        target = font[target_cp]
+        target.clear()
+        layer = target.foreground
+
+        for copy_idx in range(2):
+            tx = left_x + copy_idx * (scaled_w + gap)
+            # Move to origin, scale, move to position.
+            m = psMat.translate(-bb[0], -base_cy)
+            m = psMat.compose(m, psMat.scale(scale))
+            m = psMat.compose(
+                m, psMat.translate(tx, base_cy)
+            )
+
+            src_layer = base.foreground
+            for i in range(len(src_layer)):
+                c = src_layer[i].dup()
+                c.transform(m)
+                layer += c
+
+        target.foreground = layer
+        target.width = TARGET_WIDTH
+
+    print("Composed guillemets")
+
+
 def add_dot_to_zero(font: Font) -> None:
     """Add a centered dot inside the zero glyph."""
     glyph = font[0x30]
@@ -364,6 +414,7 @@ def main() -> None:
     replace_symbols(ocra, ocrb, ocrb_codepoints)
     add_ocrb_extras(ocra, ocrb, ocrb_codepoints)
     compose_accented_glyphs(ocra, ocrb)
+    compose_guillemets(ocra)
     add_dot_to_zero(ocra)
     set_metadata(ocra)
 
