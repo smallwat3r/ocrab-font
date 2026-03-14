@@ -7,10 +7,18 @@ OCR-B equivalents. Adds missing accented characters by
 composing base letters with accent marks from OCR-B.
 """
 
+from __future__ import annotations
+
 import fontforge
 import psMat
 import unicodedata
 from pathlib import Path
+from typing import Any
+
+# fontforge does not ship type stubs.
+Font = Any
+BBox = tuple[float, float, float, float]
+Matrix = tuple[float, float, float, float, float, float]
 
 SOURCES_DIR = Path(__file__).resolve().parent / "sources"
 OCRA_PATH = SOURCES_DIR / "OCRA.otf"
@@ -88,13 +96,13 @@ _MAX_ACCENT_H = 200
 _MAX_CEDILLA_H = 250
 
 
-def is_letter_or_digit(cp):
+def is_letter_or_digit(cp: int) -> bool:
     """Return True if codepoint is a letter or digit."""
     cat = unicodedata.category(chr(cp))
     return cat.startswith("L") or cat == "Nd"
 
 
-def _glyph_exists(font, cp):
+def _glyph_exists(font: Font, cp: int) -> bool:
     """Return True if font has an outputtable glyph."""
     try:
         return font[cp].isWorthOutputting()
@@ -102,7 +110,7 @@ def _glyph_exists(font, cp):
         return False
 
 
-def build_ocrb_codepoints(ocrb):
+def build_ocrb_codepoints(ocrb: Font) -> set[int]:
     """Return the set of codepoints present in OCR-B."""
     return {
         g.unicode for g in ocrb.glyphs()
@@ -110,7 +118,11 @@ def build_ocrb_codepoints(ocrb):
     }
 
 
-def replace_symbols(ocra, ocrb, ocrb_codepoints):
+def replace_symbols(
+    ocra: Font,
+    ocrb: Font,
+    ocrb_codepoints: set[int],
+) -> None:
     """Replace non-alphanumeric glyphs with OCR-B."""
     replaced = 0
     kept = 0
@@ -147,7 +159,11 @@ def replace_symbols(ocra, ocrb, ocrb_codepoints):
     print(f"Replaced {replaced} glyphs with OCR-B")
 
 
-def add_ocrb_extras(font, ocrb, ocrb_codepoints):
+def add_ocrb_extras(
+    font: Font,
+    ocrb: Font,
+    ocrb_codepoints: set[int],
+) -> None:
     """Add letters from OCR-B that are absent in OCR-A."""
     added = 0
     for cp in sorted(ocrb_codepoints):
@@ -177,7 +193,11 @@ def add_ocrb_extras(font, ocrb, ocrb_codepoints):
     print(f"Added {added} extra glyphs from OCR-B")
 
 
-def _accent_matrix(base_bb, accent_bb, is_cedilla):
+def _accent_matrix(
+    base_bb: BBox,
+    accent_bb: BBox,
+    is_cedilla: bool,
+) -> Matrix:
     """Build affine matrix to position an accent mark."""
     accent_w = accent_bb[2] - accent_bb[0]
     accent_h = accent_bb[3] - accent_bb[1]
@@ -190,15 +210,13 @@ def _accent_matrix(base_bb, accent_bb, is_cedilla):
     gap = 30 if is_upper else 40
 
     scaled_w = accent_w * scale
-    scaled_h = accent_h * scale
 
     # Move accent bottom-left to origin, scale uniformly,
     # then translate to final position.
+    tx = base_cx - scaled_w / 2
     if is_cedilla:
-        tx = base_cx - scaled_w / 2
-        ty = base_bb[1] - scaled_h
+        ty = base_bb[1] - accent_h * scale
     else:
-        tx = base_cx - scaled_w / 2
         ty = base_bb[3] + gap
 
     m = psMat.translate(-accent_bb[0], -accent_bb[1])
@@ -207,7 +225,7 @@ def _accent_matrix(base_bb, accent_bb, is_cedilla):
     return m
 
 
-def _remove_dot(glyph):
+def _remove_dot(glyph: Any) -> None:
     """Remove dot contour from a dotted letter (i, j).
 
     Keeps only body contours so the accent can replace
@@ -218,9 +236,7 @@ def _remove_dot(glyph):
     if n < 2:
         return
 
-    tops = [
-        layer[i].boundingBox()[3] for i in range(n)
-    ]
+    tops = [layer[i].boundingBox()[3] for i in range(n)]
     body_top = min(tops)
     keep = [
         layer[i].dup() for i in range(n)
@@ -234,7 +250,7 @@ def _remove_dot(glyph):
     glyph.foreground = layer
 
 
-def compose_accented_glyphs(font, ocrb):
+def compose_accented_glyphs(font: Font, ocrb: Font) -> None:
     """Compose accented characters from base + accent."""
     composed = 0
     for target_cp, base_cp, accent_cp in _COMPOSITIONS:
@@ -282,7 +298,7 @@ def compose_accented_glyphs(font, ocrb):
     print(f"Composed {composed} accented glyphs")
 
 
-def add_dot_to_zero(font):
+def add_dot_to_zero(font: Font) -> None:
     """Add a centered dot inside the zero glyph."""
     glyph = font[0x30]
     bb = glyph.boundingBox()
@@ -313,7 +329,7 @@ def add_dot_to_zero(font):
     glyph.correctDirection()
 
 
-def set_metadata(font):
+def set_metadata(font: Font) -> None:
     """Set font family and naming metadata."""
     font.fontname = "ocrab"
     font.familyname = "ocrab"
@@ -322,9 +338,7 @@ def set_metadata(font):
     # Clear inherited name table entries from the
     # source font so only our names remain.
     for record in list(font.sfnt_names):
-        font.appendSFNTName(
-            str(record[0]), str(record[1]), ""
-        )
+        font.appendSFNTName(str(record[0]), str(record[1]), "")
 
     names = {
         "Family": "ocrab",
@@ -339,7 +353,7 @@ def set_metadata(font):
         font.appendSFNTName("English (US)", key, value)
 
 
-def main():
+def main() -> None:
     print("Opening OCR-A ...")
     ocra = fontforge.open(str(OCRA_PATH))
 
