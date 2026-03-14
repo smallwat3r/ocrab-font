@@ -29,8 +29,9 @@ the more legible symbols of OCR-B.
 
 ## Install
 
-The font is available at `fonts/ocrab.ttf`. To install it
-to the system font directory:
+The font is available in TTF, OTF, WOFF, and WOFF2
+formats under `fonts/`. To install to the system font
+directory:
 
 ```sh
 make install
@@ -47,10 +48,10 @@ make build
 
 ## Nerd Font
 
-A patched variant with
-[Nerd Font](https://www.nerdfonts.com/) icons is available
-at `fonts/ocrab-nerd-font.ttf`. It is installed alongside
-the base font when running `make install`.
+Patched variants with
+[Nerd Font](https://www.nerdfonts.com/) icons are available
+in TTF, OTF, WOFF, and WOFF2 formats. They are installed
+alongside the base fonts when running `make install`.
 
 The Nerd Font version is recommended, as it includes
 additional patched glyphs such as box-drawing characters,

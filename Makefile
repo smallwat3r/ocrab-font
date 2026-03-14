@@ -10,41 +10,65 @@ endif
 FONTFORGE  := fontforge
 FONTIMAGE  := fontimage
 SILICON    := silicon
-OUTPUT     := fonts/ocrab.ttf
-NERD_FONT  := fonts/ocrab-nerd-font.ttf
+TTF        := fonts/ocrab.ttf
+OTF        := fonts/ocrab.otf
+WOFF       := fonts/ocrab.woff
+WOFF2      := fonts/ocrab.woff2
+OUTPUTS    := $(TTF) $(OTF) $(WOFF) $(WOFF2)
+NERD_TTF   := fonts/ocrab-nerd-font.ttf
+NERD_OTF   := fonts/ocrab-nerd-font.otf
+NERD_WOFF  := fonts/ocrab-nerd-font.woff
+NERD_WOFF2 := fonts/ocrab-nerd-font.woff2
+NERD_FONTS := $(NERD_TTF) $(NERD_OTF) $(NERD_WOFF) $(NERD_WOFF2)
 
 .PHONY: install build patch images clean
-.PHONY: images/chars.png images/code.png $(OUTPUT)
+.PHONY: images/chars.png images/code.png $(OUTPUTS)
 
 install:
 	mkdir -p $(FONT_DIR)
-	cp fonts/ocrab.ttf $(FONT_DIR)/ocrab.ttf
-	@if [ -f $(NERD_FONT) ]; then \
-		cp $(NERD_FONT) $(FONT_DIR)/ocrab-nerd-font.ttf; \
+	cp $(OTF) $(FONT_DIR)/ocrab.otf
+	@if [ -f $(NERD_OTF) ]; then \
+		cp $(NERD_OTF) $(FONT_DIR)/ocrab-nerd-font.otf; \
 	fi
 ifeq ($(UNAME),Darwin)
 else ifneq ($(OS),Windows_NT)
 	fc-cache -f
 endif
 
-build: $(OUTPUT)
+build: $(OUTPUTS)
 
-$(OUTPUT): build.py sources/OCRA.otf sources/OCRB.ttf
+$(OUTPUTS): build.py sources/OCRA.otf sources/OCRB.ttf
 	$(FONTFORGE) -lang=py -script build.py
 
-patch: $(NERD_FONT)
+patch: $(NERD_FONTS)
 
-$(NERD_FONT): $(OUTPUT)
+$(NERD_TTF): $(TTF)
 	docker run --rm --user $(shell id -u):$(shell id -g) \
-		-v $(CURDIR)/$(OUTPUT):/in/ocrab.ttf:ro \
+		-v $(CURDIR)/$(TTF):/in/ocrab.ttf:ro \
 		-v $(CURDIR)/fonts:/out \
 		nerdfonts/patcher \
 		--mono --complete --careful --no-progressbars
 	mv fonts/OcrabNerdFontMono-Regular.ttf $@
 
+$(NERD_OTF): $(OTF)
+	docker run --rm --user $(shell id -u):$(shell id -g) \
+		-v $(CURDIR)/$(OTF):/in/ocrab.otf:ro \
+		-v $(CURDIR)/fonts:/out \
+		nerdfonts/patcher \
+		--mono --complete --careful --no-progressbars
+	mv fonts/OcrabNerdFontMono-Regular.otf $@
+
+$(NERD_WOFF): $(NERD_TTF)
+	$(FONTFORGE) -c 'f = fontforge.open("$(NERD_TTF)"); \
+		f.generate("$@"); f.close()'
+
+$(NERD_WOFF2): $(NERD_TTF)
+	$(FONTFORGE) -c 'f = fontforge.open("$(NERD_TTF)"); \
+		f.generate("$@"); f.close()'
+
 images: images/chars.png images/code.png
 
-images/chars.png: $(OUTPUT)
+images/chars.png: $(TTF)
 	$(FONTIMAGE) --pixelsize 40 \
 		--text "ABCDEFGHIJKLMNOPQRSTUVWXYZ" \
 		--text "abcdefghijklmnopqrstuvwxyz" \
@@ -63,7 +87,7 @@ void *memdup(const void *src, size_t len) {
 endef
 export SAMPLE_CODE
 
-images/code.png: $(OUTPUT)
+images/code.png: $(TTF)
 	printf '%s\n' "$$SAMPLE_CODE" > /tmp/sample.c
 	$(SILICON) /tmp/sample.c -o $@ \
 		-f "ocrab" -l c --theme 1337 \
@@ -73,4 +97,4 @@ images/code.png: $(OUTPUT)
 		--background "#111111"
 
 clean:
-	rm -f $(OUTPUT) $(NERD_FONT)
+	rm -f $(OUTPUTS) $(NERD_FONTS)

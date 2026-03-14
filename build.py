@@ -24,7 +24,12 @@ SOURCES_DIR = Path(__file__).resolve().parent / "sources"
 OCRA_PATH = SOURCES_DIR / "OCRA.otf"
 OCRB_PATH = SOURCES_DIR / "OCRB.ttf"
 OUTPUT_DIR = Path(__file__).resolve().parent / "fonts"
-OUTPUT = OUTPUT_DIR / "ocrab.ttf"
+OUTPUTS = [
+    OUTPUT_DIR / "ocrab.ttf",
+    OUTPUT_DIR / "ocrab.otf",
+    OUTPUT_DIR / "ocrab.woff",
+    OUTPUT_DIR / "ocrab.woff2",
+]
 
 TARGET_WIDTH = 723
 
@@ -419,8 +424,9 @@ def main() -> None:
     set_metadata(ocra)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"Generating {OUTPUT} ...")
-    ocra.generate(str(OUTPUT))
+    for output in OUTPUTS:
+        print(f"Generating {output} ...")
+        ocra.generate(str(output))
 
     ocra.close()
     ocrb.close()
